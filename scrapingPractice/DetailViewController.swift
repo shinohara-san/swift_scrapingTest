@@ -33,7 +33,7 @@ extension UIImage {
     public convenience init(url: String) {
         let url = URL(string: "https://www.aeonet.co.jp" + url)
         do {
-            print(url!)//urlが間違ってる可能性あるのでちゃんとアクセスできるかブラウザ確認
+            //print(url!)//urlが間違ってる可能性あるのでちゃんとアクセスできるかブラウザ確認
             let data = try Data(contentsOf: url!)
             self.init(data: data)!
             return

@@ -15,7 +15,7 @@ class ViewController: UIViewController {
     @IBOutlet weak var tableView: UITableView!
     
     var mentors = [Mentor]()
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         tableView.delegate = self
@@ -29,31 +29,25 @@ class ViewController: UIViewController {
     func getData(){
         AF.request("https://www.aeonet.co.jp/school/kyushu/fukuoka/4021/staff/").responseString { [weak self] (response) in
             if let html = response.value {
-//                print(html)
-                var names = [String]()
+                
                 if let doc = try? HTML(html: html, encoding: String.Encoding.utf8){
+                    var names = [String]()
                     for mentorName in doc.xpath("//h4[@class='teacher-name']"){
                         names.append(mentorName.text ?? "")
                     }
-//                print(names)
-                var urls = [String]()
-                if let doc = try? HTML(html: html, encoding: String.Encoding.utf8){
-                    let path = "//div[@class='teacher-image']/img/@src"
-//                    let path = "//p[@class='teacher-lead']"
-                 for urlName in doc.xpath(path){
-//                    print(urlName.text ?? "無し")
-                     urls.append(urlName.text ?? "無し")
-                 }
                     
-                var comments = [String]()
-                    if let doc = try? HTML(html: html, encoding: String.Encoding.utf8){
-                        let path = "//p[@class='teacher-lead']"
-                        //                    let path = "//p[@class='teacher-lead']"
-                        for comment in doc.xpath(path){
-                            //                    print(urlName.text ?? "無し")
-                            comments.append(comment.text ?? "無し")
-                        }
+                    var urls = [String]()
+                    let imagePath = "//div[@class='teacher-image']/img/@src"
+                    for urlName in doc.xpath(imagePath){
+                        urls.append(urlName.text ?? "無し")
                     }
+                    
+                    var comments = [String]()
+                    let commentPath = "//p[@class='teacher-lead']"
+                    for comment in doc.xpath(commentPath){
+                        comments.append(comment.text ?? "無し")
+                    }
+                    
                     for (index, value) in names.enumerated(){
                         let mentor = Mentor()
                         mentor.name = value
@@ -68,7 +62,7 @@ class ViewController: UIViewController {
         }
     }
 }
-}
+
 
 extension ViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -77,8 +71,9 @@ extension ViewController: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
-        cell.textLabel?.text = mentors[indexPath.row].name
-        cell.detailTextLabel?.text = mentors[indexPath.row].imageURL
+        let mentor = mentors[indexPath.row]
+        cell.textLabel?.text = mentor.name
+        cell.detailTextLabel?.text = mentor.imageURL
         return cell
     }
     
@@ -95,10 +90,10 @@ class Mentor {
     var name:String = ""
     var imageURL: String = ""
     var lead: String = ""
-//    init(name: String, imageURL:String) {
-//        self.name = name
-//        self.imageURL = imageURL
-//    }
+    //    init(name: String, imageURL:String) {
+    //        self.name = name
+    //        self.imageURL = imageURL
+    //    }
 }
 
 //xpath
